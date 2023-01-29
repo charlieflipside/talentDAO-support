@@ -27,13 +27,13 @@ FROM
 ethereum.core.ez_snapshot
 WHERE
 ethereum.core.ez_snapshot.voter IN ('ADDRESSLIST') 
-AND BLOCK_NUMBER <= 16515000
+AND PROPOSAL_END_TIME <= '2023-01-28'
   "
 }
 # swap parameters
 snapshot_query <- gsub('ADDRESSLIST', replacement = alist, x = snapshot_query)
 
-
+snapshots <- shroomDK::auto_paginate_query(snapshot_query, api_key = api_key)
 #NFT projects minted
 nftmint_query <- {
 "
@@ -53,3 +53,8 @@ AND BLOCK_NUMBER <= 16515000
 
 
 nftmint_query <- gsub('ADDRESSLIST', replacement = alist, x = nftmint_query)
+
+nftmints <- shroomDK::auto_paginate_query(nftmint_query, api_key = api_key)
+
+write.csv(snapshots, file = "votes_by_voter.csv", row.names = FALSE)
+write.csv(nftmints, file = "nft_mints_by_TO_ADDRESS.csv", row.names = FALSE)
